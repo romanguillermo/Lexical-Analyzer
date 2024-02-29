@@ -1,0 +1,17 @@
+Token Type | Lexeme
+------------------------------
+Keyword    | while
+Separator  | (
+Identifier | k
+Operator   | <=
+Identifier | lower
+Separator  | )
+Separator  | :
+Identifier | s
+Operator   | =
+Real       | 33.00
+Separator  | ;
+Identifier | k
+Operator   | +=
+Integer    | 1
+Separator  | ;
