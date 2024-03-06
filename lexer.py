@@ -146,6 +146,7 @@ class Lexer:
             file.write("-" * 30 + "\n")
             for token in tokens:
                 file.write(f"{token}\n")
+        print(f"Output written to: {output_file}")
 
 # Example usage:
 input_file = input("Enter the input file name: ")
