@@ -142,13 +142,14 @@ class Lexer:
     def output_tokens(self, tokens, output_file):
         """Formatted output of tokens and lexemes to output file"""
         with open(output_file, "w") as file:
-            file.write(f"{'Token Type':<10} | Lexeme\n")
+            file.write(f"{'Token':<10} | Lexeme\n")
             file.write("-" * 30 + "\n")
             for token in tokens:
                 file.write(f"{token}\n")
 
 # Example usage:
-lexer = Lexer("input_scode.txt")
+input_file = input("Enter the input file name: ")
+lexer = Lexer(input_file)
 tokens = []
 while True:
     token = lexer.next_token()
