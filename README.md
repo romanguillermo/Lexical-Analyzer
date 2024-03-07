@@ -3,6 +3,4 @@ Guillermo Roman\
 Gautham Vegeraju\
 Julio Villegas
 
-
-1. Enter input file name "input_scode.txt"
-2. View output in "output.txt"
+Implements an fsm for identifiers, integers (and reals), and strings.
