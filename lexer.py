@@ -9,17 +9,18 @@ digits = set(string.digits)
 keywords = set(keyword.kwlist)
 operators = {"+","-","*","/","%","//","==","!=",">","<",">=","<=","=","+=","-=","*=",
              "/=","%=","**=","//=","&","|","^","~","<<",">>",}
-separators = {"(", ")", "[", "]", "{", "}", ",", ";", ":", ".", "@", "#", '"', "'"}
+separators = {"(", ")", "[", "]", "{", "}", ",", ";", ":", ".", "@", "#",}
 whitespace = {" ", "\t", "\n"}
 
 # Constants for token types
-INTEGER, IDENTIFIER, KEYWORD, OPERATOR, SEPARATOR, REAL = (
+INTEGER, IDENTIFIER, KEYWORD, OPERATOR, SEPARATOR, REAL, STRING = (
     "Integer",
     "Identifier",
     "Keyword",
     "Operator",
     "Separator",
     "Real",
+    "String",
 )
 
 class Token:
@@ -55,9 +56,11 @@ class Lexer:
             if self.current_char in whitespace:
                 self.get_next_char()  # Skip whitespace characters
                 continue
-            elif (
-                self.current_char in letters
-            ):  # if char is a letter, call identifier fsm, then check if keyword
+            if self.current_char == '#':  # Skip comments by advancing until new line reached
+                while self.current_char is not None and self.current_char != '\n':
+                    self.get_next_char()
+                continue 
+            elif self.current_char in letters:  # if char is a letter, call identifier fsm, then check if keyword
                 token = self.identifier_fsm()
                 if token.lexeme in keywords:
                     token.type = KEYWORD
@@ -75,6 +78,8 @@ class Lexer:
                 separator = self.current_char
                 self.get_next_char()
                 return Token(SEPARATOR, separator)
+            elif self.current_char in {'"', "'"}:  # strings
+                return self.string_fsm()
             else:
                 self.get_next_char()
         return None  # Indicates end of input or no more tokens
@@ -138,6 +143,35 @@ class Lexer:
             return Token(REAL, integer_or_real)
         else:
             return None
+        
+    def string_fsm(self):
+        """Finite State Machine for recognizing strings."""
+        state = 1
+        accepting_states = [3]
+        string_literal = ""
+        string_quote = self.current_char
+        string_transition_table = {
+            (1, string_quote): 2,
+            (2, "character"): 2,
+            (2, string_quote): 3,
+        }
+        while self.current_char is not None:
+            char_category = (
+                string_quote
+                if self.current_char == string_quote
+                else "character"
+            )
+            if (state, char_category) in string_transition_table:
+                state = string_transition_table[(state, char_category)]
+                string_literal += self.current_char
+            else:
+                break
+            self.get_next_char()
+
+        if state in accepting_states:
+            return Token(STRING, string_literal)
+        else:
+            return None
 
     def output_tokens(self, tokens, output_file):
         """Formatted output of tokens and lexemes to output file"""
@@ -149,8 +183,7 @@ class Lexer:
         print(f"Output written to: {output_file}")
 
 # Example usage:
-input_file = input("Enter the input file name: ")
-lexer = Lexer(input_file)
+lexer = Lexer("input_scode.txt")
 tokens = []
 while True:
     token = lexer.next_token()

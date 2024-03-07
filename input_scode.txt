@@ -1,3 +1,4 @@
-while ( k <= lower):
+while ( k <= "lower"):
     s = 33.00;
+    # comment test
     k +=1;
